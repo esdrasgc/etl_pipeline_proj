@@ -1,4 +1,4 @@
 (executable
  (public_name etl_pipeline)
  (name main)
- (libraries etl_pipeline))
+ (libraries etl_funcs))
