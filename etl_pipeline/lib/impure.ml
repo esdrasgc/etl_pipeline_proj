@@ -1,10 +1,5 @@
 open Custom_types
 
-(* let parse_id raw_id =
-  raw_id
-  |> int_of_string *)
-  (* |> Option.to_result ~none:`Invalid_id *)
-
 let parse_datetime dt_str =
     let year   = Year (String.sub dt_str 0 4 |> int_of_string) in
     let month  = Month (String.sub dt_str 5 2 |> int_of_string) in
@@ -24,18 +19,19 @@ let create_updated_record_order obj old_record =
     | "origin" -> {old_record with origin = Pure.parse_origin value}
     | _ -> old_record
 
-let parse_row row : (string * string) list =
-  let rec parse_row_acumulated remaining_objs actual_record =
-    match remaining_objs with
-    | [] -> actual_record
-    | h::t -> create_updated_record_order h (parse_row_acumulated t actual_record)
-  in
-  parse_row_acumulated row {id = -1;client_id = -1; order_date = (Year 0, Month 0, Day 0, Hour 0, Minutes 0, Seconds 0); status = Unknown_status; origin = Unknown_origin}
+let parse_row row : order =
+  let initial_record = {
+    id = -1;
+    client_id = -1;
+    order_date = (Year 0, Month 0, Day 0, Hour 0, Minutes 0, Seconds 0);
+    status = Unknown_status;
+    origin = Unknown_origin
+  } in
+  List.fold_left (fun acc obj -> create_updated_record_order obj acc) initial_record row
 
-let parse_order csv_t : Csv.t =
+let parse_order csv_t : order list =
   let header, data = match csv_t with h :: d -> h, d | [] -> ([], []) in
   let data_associated = Csv.associate header data in
-  data_associated 
-  |> List.map parse_row
+  List.map parse_row data_associated
   
-let load_orders () = Csv.load "data/raw/order.csv"  
+let load_orders () = Csv.load "data/raw/order.csv"

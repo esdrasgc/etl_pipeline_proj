@@ -1,19 +1,26 @@
-(* open Etl_funcs.Custom_types
-let () =
-  let csv_orders = Etl_funcs.Impure.load_orders () in
-    
-    let header, data = match csv_orders with h :: d -> h, d | [] -> [], [] in
-      let teste = Csv.associate header data in
-      let flattened = List.concat teste in
-      List.iter (fun (key, value) ->
-        Printf.printf "Chave: %s, Valor: %s\n" key value
-      ) flattened *)
-
 open Etl_funcs.Custom_types
+
+let print_datetime (Year year, Month month, Day day, Hour hour, Minutes min, Seconds sec) =
+  Printf.printf "Date: %04d-%02d-%02d %02d:%02d:%02d\n" year month day hour min sec
+
+let print_status = function
+  | Pending -> "Pending"
+  | Complete -> "Complete"
+  | Cancelled -> "Cancelled"
+  | Unknown_status -> "Unknown"
+
+let print_origin = function
+  | Online -> "Online"
+  | InPerson -> "In Person"
+  | Unknown_origin -> "Unknown"
 
 let print_order_record order =
   Printf.printf "Order ID: %d\n" order.id;
   Printf.printf "Client ID: %d\n" order.client_id;
+  print_datetime order.order_date;
+  Printf.printf "Status: %s\n" (print_status order.status);
+  Printf.printf "Origin: %s\n" (print_origin order.origin);
+  Printf.printf "\n"
   
 let () =
   Printf.printf "Loading and parsing orders...\n";
