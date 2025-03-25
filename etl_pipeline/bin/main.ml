@@ -21,6 +21,14 @@ let print_order_record order =
   Printf.printf "Status: %s\n" (print_status order.status);
   Printf.printf "Origin: %s\n" (print_origin order.origin);
   Printf.printf "\n"
+
+let print_order_item_record item =
+  Printf.printf "Order ID: %d\n" item.order_id;
+  Printf.printf "Product ID: %d\n" item.product_id;
+  Printf.printf "Quantity: %d\n" item.quantity;
+  Printf.printf "Price: %.2f\n" item.price;
+  Printf.printf "Tax: %.2f\n" item.tax;
+  Printf.printf "\n"
   
 let () =
   Printf.printf "Loading and parsing orders...\n";
@@ -31,8 +39,8 @@ let () =
     
     Printf.printf "Successfully parsed %d orders.\n\n" (List.length parsed_orders);
     
-    (* Print first 5 orders as example *)
-    let orders_to_print = min 5 (List.length parsed_orders) in
+    (* Print first 3 orders as example *)
+    let orders_to_print = min 3 (List.length parsed_orders) in
     Printf.printf "Showing first %d orders:\n\n" orders_to_print;
     
     List.iteri (fun i order ->
@@ -40,7 +48,26 @@ let () =
         Printf.printf "Order #%d:\n" (i + 1);
         print_order_record order
       )
-    ) parsed_orders
+    ) parsed_orders;
+    
+    (* Load and parse order items *)
+    Printf.printf "Loading and parsing order items...\n";
+    let csv_order_items = Etl_funcs.Impure.load_order_items () in
+    
+    let parsed_order_items = Etl_funcs.Impure.parse_order_item csv_order_items in
+    
+    Printf.printf "Successfully parsed %d order items.\n\n" (List.length parsed_order_items);
+    
+    (* Print first 3 order items as example *)
+    let items_to_print = min 3 (List.length parsed_order_items) in
+    Printf.printf "Showing first %d order items:\n\n" items_to_print;
+    
+    List.iteri (fun i item ->
+      if i < items_to_print then (
+        Printf.printf "Order Item #%d:\n" (i + 1);
+        print_order_item_record item
+      )
+    ) parsed_order_items
     
   with e ->
     Printf.printf "Error during parsing: %s\n" (Printexc.to_string e);

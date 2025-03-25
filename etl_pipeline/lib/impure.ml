@@ -9,6 +9,7 @@ let parse_datetime dt_str =
     let seconds= Seconds (String.sub dt_str 17 2 |> int_of_string) in
     (year, month, day, hour, minutes, seconds)
 
+(* Order parsing functions *)
 let create_updated_record_order obj old_record =
   match obj with (column, value) ->
     match column with 
@@ -35,3 +36,31 @@ let parse_order csv_t : order list =
   List.map parse_row data_associated
   
 let load_orders () = Csv.load "data/raw/order.csv"
+
+(* Order item parsing functions *)
+let create_updated_record_order_item obj old_record =
+  match obj with (column, value) ->
+    match column with 
+    | "order_id" -> {old_record with order_id = int_of_string value}
+    | "product_id" -> {old_record with product_id = int_of_string value}
+    | "quantity" -> {old_record with quantity = int_of_string value}
+    | "price" -> {old_record with price = float_of_string value}
+    | "tax" -> {old_record with tax = float_of_string value}
+    | _ -> old_record
+
+let parse_row_order_item row : order_item =
+  let initial_record = {
+    order_id = -1;
+    product_id = -1;
+    quantity = -1;
+    price = -1.0;
+    tax = -1.0;
+  } in
+  List.fold_left (fun acc obj -> create_updated_record_order_item obj acc) initial_record row
+
+let parse_order_item csv_t : order_item list =
+  let header, data = match csv_t with h :: d -> h, d | [] -> ([], []) in
+  let data_associated = Csv.associate header data in
+  List.map parse_row_order_item data_associated
+
+let load_order_items () = Csv.load "data/raw/order_item.csv"

@@ -1,4 +1,3 @@
-
 type order_status = Pending | Complete | Cancelled | Unknown_status
 
 type order_origin = Online | InPerson | Unknown_origin
@@ -20,4 +19,12 @@ type order = {
     order_date : datetime;
     status: order_status;
     origin: order_origin;
+}
+
+type order_item = {
+    order_id : int;
+    product_id : int;
+    quantity : int;
+    price : float;
+    tax : float;
 }
