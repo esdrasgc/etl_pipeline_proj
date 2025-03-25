@@ -1,82 +1,41 @@
 open Custom_types
 
-let parse_status = function
-  | "Pending" -> Ok Pending
-  | "Complete" -> Ok Complete
-  | "Cancelled" -> Ok Cancelled
-  | _ -> Error Unknown_status
-
-let parse_origin = function
-  | "O" -> Ok Online
-  | "P" -> Ok InPerson
-  | _ -> Error Unknown_origin
-
-let parse_id raw_id =
+(* let parse_id raw_id =
   raw_id
-  |> int_of_string
+  |> int_of_string *)
   (* |> Option.to_result ~none:`Invalid_id *)
 
-let get_two_digits str pos =
-  String.sub str pos 2
-  |> int_of_string
+let parse_datetime dt_str =
+    let year   = Year (String.sub dt_str 0 4 |> int_of_string) in
+    let month  = Month (String.sub dt_str 5 2 |> int_of_string) in
+    let day    = Day (String.sub dt_str 8 2 |> int_of_string) in
+    let hour   = Hour (String.sub dt_str 11 2 |> int_of_string) in
+    let minutes= Minutes (String.sub dt_str 14 2 |> int_of_string) in
+    let seconds= Seconds (String.sub dt_str 17 2 |> int_of_string) in
+    (year, month, day, hour, minutes, seconds)
 
-(* let parse_datetime dt_str : string =
-  let* year =
-    Year (String.sub dt_str 0 4 |> int_of_string)
-  in
-  let* month =
-    Month (get_two_digits dt_str 6)
-  in
-  let* day =
-    Day (get_two_digits dt_str 9)
-  in
-  let* hour =
-    Hour (get_two_digits dt_str 12)
-  in 
-  let* minutes = 
-    Minutes (get_two_digits dt_str 15)
-  in
-  let* seconds =
-    Seconds (get_two_digits datetime_str 18)
-  in 
-  Ok (year , month , day , hour , minutes , seconds) *)
+let create_updated_record_order obj old_record =
+  match obj with (column, value) ->
+    match column with 
+    | "id" -> {old_record with id = int_of_string value}
+    | "client_id" -> {old_record with client_id = int_of_string value}
+    | "order_date" -> {old_record with order_date = parse_datetime value}
+    | "status" -> {old_record with status = Pure.parse_status value}
+    | "origin" -> {old_record with origin = Pure.parse_origin value}
+    | _ -> old_record
 
-  let parse_datetime dt_str =
-      let year   = Year (String.sub dt_str 0 4 |> int_of_string) in
-      let month  = Month (String.sub dt_str 5 2 |> int_of_string) in
-      let day    = Day (String.sub dt_str 8 2 |> int_of_string) in
-      let hour   = Hour (String.sub dt_str 11 2 |> int_of_string) in
-      let minutes= Minutes (String.sub dt_str 14 2 |> int_of_string) in
-      let seconds= Seconds (String.sub dt_str 17 2 |> int_of_string) in
-      (year, month, day, hour, minutes, seconds)
+let parse_row row : (string * string) list =
+  let rec parse_row_acumulated remaining_objs actual_record =
+    match remaining_objs with
+    | [] -> actual_record
+    | h::t -> create_updated_record_order h (parse_row_acumulated t actual_record)
+  in
+  parse_row_acumulated row {id = -1;client_id = -1; order_date = (Year 0, Month 0, Day 0, Hour 0, Minutes 0, Seconds 0); status = Unknown_status; origin = Unknown_origin}
 
-(* let parse_datetime datetime_str : string =
-  (Year String.sub datetime_str 0 4 |> int_of_string, Month get_two_digits datetime_str 6, Day get_two_digits datetime_str 9, Hour get_two_digits datetime_str 12, Minutes get_two_digits datetime_str 15, Seconds get_two_digits datetime_str 18) *)
-
-let parse_row row =
-  let id =
-    Csv.Row.find row "id" |> parse_id
-  in
-  let client_id =
-    Csv.Row.find row "client_id" |> parse_id
-  in
-  let order_date =
-    Csv.Row.find row "order_date" |> parse_datetime
-  in
-  let status =
-  Csv.Row.find row "status" |> parse_status
-  in
-  let origin =
-  Csv.Row.find row "origin" |> parse_origin
-  in
-  Ok { id; client_id; order_date; status; origin}
-
-
-let parse_order csv_str =
-  csv_str
-  |> Csv.of_string ~has_header:true
-  |> Csv.Rows.input_all
+let parse_order csv_t : Csv.t =
+  let header, data = match csv_t with h :: d -> h, d | [] -> ([], []) in
+  let data_associated = Csv.associate header data in
+  data_associated 
   |> List.map parse_row
   
-    
 let load_orders () = Csv.load "data/raw/order.csv"  
