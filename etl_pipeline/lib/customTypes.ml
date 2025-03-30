@@ -28,3 +28,13 @@ type order_item = {
     price : float;
     tax : float;
 }
+
+type agg_order_info = {
+    order_id : int;
+    total_amount : float;
+    total_taxes : float;
+}
+
+type ids_list = int list 
+type order_item_list = order_item list
+type order_list = order list

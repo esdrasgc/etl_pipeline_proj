@@ -67,7 +67,10 @@ let () =
         Printf.printf "Order Item #%d:\n" (i + 1);
         print_order_item_record item
       )
-    ) parsed_order_items
+    ) parsed_order_items;
+    
+    let list_of_ids = Etl_funcs.TransformData.filter_orders_by_status_and_origin parsed_orders Complete Online in
+    List.iter (fun id -> Printf.printf "Id: %d\n" id) list_of_ids
     
   with e ->
     Printf.printf "Error during parsing: %s\n" (Printexc.to_string e);

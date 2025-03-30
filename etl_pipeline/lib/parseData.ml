@@ -22,7 +22,7 @@ let parse_datetime dt_str =
   (year, month, day, hour, minutes, seconds)
 
 (* Order parsing functions *)
-let create_updated_record_order obj old_record =
+let create_updated_record_order obj old_record : order =
   match obj with (column, value) ->
     match column with 
     | "id" -> {old_record with id = int_of_string value}
@@ -48,7 +48,7 @@ let parse_order csv_t : order list =
   List.map parse_row data_associated
 
 (* Order item parsing functions *)
-let create_updated_record_order_item obj old_record =
+let create_updated_record_order_item obj old_record : order_item =
   match obj with (column, value) ->
     match column with 
     | "order_id" -> {old_record with order_id = int_of_string value}
