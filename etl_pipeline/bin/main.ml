@@ -1,4 +1,4 @@
-open Etl_funcs.Custom_types
+open Etl_funcs.CustomTypes
 
 let print_datetime (Year year, Month month, Day day, Hour hour, Minutes min, Seconds sec) =
   Printf.printf "Date: %04d-%02d-%02d %02d:%02d:%02d\n" year month day hour min sec
@@ -32,10 +32,10 @@ let print_order_item_record item =
   
 let () =
   Printf.printf "Loading and parsing orders...\n";
-  let csv_orders = Etl_funcs.Impure.load_orders () in
+  let csv_orders = Etl_funcs.ReadData.load_orders () in
   
   try
-    let parsed_orders = Etl_funcs.Pure.parse_order csv_orders in
+    let parsed_orders = Etl_funcs.ParseData.parse_order csv_orders in
     
     Printf.printf "Successfully parsed %d orders.\n\n" (List.length parsed_orders);
     
@@ -52,9 +52,9 @@ let () =
     
     (* Load and parse order items *)
     Printf.printf "Loading and parsing order items...\n";
-    let csv_order_items = Etl_funcs.Impure.load_order_items () in
+    let csv_order_items = Etl_funcs.ReadData.load_order_items () in
     
-    let parsed_order_items = Etl_funcs.Pure.parse_order_item csv_order_items in
+    let parsed_order_items = Etl_funcs.ParseData.parse_order_item csv_order_items in
     
     Printf.printf "Successfully parsed %d order items.\n\n" (List.length parsed_order_items);
     

@@ -1,4 +1,4 @@
-open Custom_types
+open CustomTypes
 
 let parse_status = function
   | "Pending" -> Pending

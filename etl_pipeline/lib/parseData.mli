@@ -1,4 +1,4 @@
-open Custom_types
+open CustomTypes
 val parse_status : string -> order_status
 val parse_origin : string -> order_origin
 val parse_order : Csv.t -> order list
