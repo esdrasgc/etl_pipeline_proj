@@ -29,7 +29,13 @@ let print_order_item_record item =
   Printf.printf "Price: %.2f\n" item.price;
   Printf.printf "Tax: %.2f\n" item.tax;
   Printf.printf "\n"
-  
+
+let print_agg_order_info info =
+  Printf.printf "Order ID: %d\n" info.order_id_;
+  Printf.printf "Total Amount: %.2f\n" info.total_amount;
+  Printf.printf "Total Taxes: %.2f\n" info.total_taxes;
+  Printf.printf "\n"
+
 let () =
   Printf.printf "Loading and parsing orders...\n";
   let csv_orders = Etl_funcs.ReadData.load_orders () in
@@ -70,7 +76,12 @@ let () =
     ) parsed_order_items;
     
     let list_of_ids = Etl_funcs.TransformData.filter_orders_by_status_and_origin parsed_orders Complete Online in
-    List.iter (fun id -> Printf.printf "Id: %d\n" id) list_of_ids
+    Printf.printf "\nFiltered order IDs:\n";
+    List.iter (fun id -> Printf.printf "Id: %d\n" id) list_of_ids;
+    
+    let agg_info = Etl_funcs.TransformData.transform_orders_to_agg_info list_of_ids parsed_order_items in
+    Printf.printf "\nAggregated order information:\n";
+    List.iter print_agg_order_info agg_info
     
   with e ->
     Printf.printf "Error during parsing: %s\n" (Printexc.to_string e);

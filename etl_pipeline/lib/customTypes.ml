@@ -30,9 +30,9 @@ type order_item = {
 }
 
 type agg_order_info = {
-    order_id : int;
     total_amount : float;
     total_taxes : float;
+    order_id_ : int;
 }
 
 type ids_list = int list 
