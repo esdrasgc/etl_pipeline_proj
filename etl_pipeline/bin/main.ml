@@ -35,7 +35,7 @@ let () =
   let csv_orders = Etl_funcs.Impure.load_orders () in
   
   try
-    let parsed_orders = Etl_funcs.Impure.parse_order csv_orders in
+    let parsed_orders = Etl_funcs.Pure.parse_order csv_orders in
     
     Printf.printf "Successfully parsed %d orders.\n\n" (List.length parsed_orders);
     
@@ -54,7 +54,7 @@ let () =
     Printf.printf "Loading and parsing order items...\n";
     let csv_order_items = Etl_funcs.Impure.load_order_items () in
     
-    let parsed_order_items = Etl_funcs.Impure.parse_order_item csv_order_items in
+    let parsed_order_items = Etl_funcs.Pure.parse_order_item csv_order_items in
     
     Printf.printf "Successfully parsed %d order items.\n\n" (List.length parsed_order_items);
     
