@@ -1,7 +1,12 @@
+(** This module defines custom types used throughout the ETL pipeline *)
+
+(** Represents the current status of an order *)
 type order_status = Pending | Complete | Cancelled | Unknown_status
 
+(** Represents the origin channel of an order *)
 type order_origin = Online | InPerson | Unknown_origin
 
+(** Components of date and time *)
 type year = Year of int 
 type month = Month of int
 type day = Day of int
@@ -9,10 +14,10 @@ type hour = Hour of int
 type minutes = Minutes of int
 type seconds = Seconds of int
 
+(** Represents a full datetime as a tuple of components *)
 type datetime = year * month * day * hour * minutes * seconds 
 
-(* type identifier = int *)
-
+(** Represents an order record with its attributes *)
 type order = {
     id : int;
     client_id : int;
@@ -21,6 +26,7 @@ type order = {
     origin: order_origin;
 }
 
+(** Represents an item within an order *)
 type order_item = {
     order_id : int;
     product_id : int;
@@ -29,12 +35,16 @@ type order_item = {
     tax : float;
 }
 
+(** Represents aggregated information for an order *)
 type agg_order_info = {
     total_amount : float;
     total_taxes : float;
     order_id_ : int;
 }
 
+(** List of integer IDs *)
 type ids_list = int list 
+(** List of order items *)
 type order_item_list = order_item list
+(** List of orders *)
 type order_list = order list
