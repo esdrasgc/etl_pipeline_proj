@@ -72,3 +72,14 @@ let parse_order_item csv_t : order_item list =
   let header, data = match csv_t with h :: d -> h, d | [] -> ([], []) in
   let data_associated = Csv.associate header data in
   List.map parse_row_order_item data_associated
+
+let parse_agg_order_to_csv (agg_order : agg_order_info list) : Csv.t =
+  let header = ["order_id"; "total_amount"; "total_taxes";] in
+  let data = List.map (fun agg_info ->
+    [
+      string_of_int agg_info.order_id_;
+      string_of_float agg_info.total_amount;
+      string_of_float agg_info.total_taxes;
+    ]
+  ) agg_order in
+  header :: data
