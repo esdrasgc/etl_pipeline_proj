@@ -68,15 +68,6 @@ let compare_month_year my1 my2 =
   let year_diff = my1.year - my2.year in
   if year_diff != 0 then year_diff else my1.month - my2.month
 
-(** Checks if a month-year is between two others (inclusive)
-    @param my Month-year to check
-    @param start Start month-year
-    @param end_my End month-year
-    @return True if my is between start and end_my (inclusive)
-*)
-(* let is_month_year_between my start end_my =
-  compare_month_year my start >= 0 && compare_month_year my end_my <= 0 *)
-
 (** Increments a month-year by one month
     @param my Month-year to increment
     @return Next month-year
