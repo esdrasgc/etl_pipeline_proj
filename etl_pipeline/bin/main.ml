@@ -26,8 +26,16 @@ let filtered_orders = Etl_funcs.TransformData.filter_orders_by_status_and_origin
 (** Transform: Aggregate order information *)
 let agg_information = Etl_funcs.TransformData.transform_orders_to_agg_info filtered_orders order_items_records
 
+(** Transform: Aggregate order information by month and year *)
+let month_year_agg_information = Etl_funcs.TransformData.transform_orders_to_month_year_agg order_records order_items_records
+
 (** Load: Convert aggregated data to CSV format *)
 let csv_agg_info = Etl_funcs.ParseData.parse_agg_order_to_csv agg_information
 
-(** Load: Save processed data to file *)
-let () = Csv.save "data/processed/agg_order.csv" csv_agg_info
+(** Load: Convert month-year aggregated data to CSV format *)
+let csv_month_year_agg_info = Etl_funcs.ParseData.parse_agg_month_year_to_csv month_year_agg_information
+
+(** Load: Save both processed data files *)
+let () = 
+  Csv.save "data/processed/agg_order.csv" csv_agg_info;
+  Csv.save "data/processed/agg_month_year.csv" csv_month_year_agg_info

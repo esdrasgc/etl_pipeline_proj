@@ -123,3 +123,19 @@ let parse_agg_order_to_csv (agg_order : agg_order_info list) : Csv.t =
     ]
   ) agg_order in
   header :: data
+
+(** Converts a list of aggregated month-year info records to CSV format
+    @param agg_month_year List of aggregated month-year information
+    @return CSV table with headers and data ready to be saved
+*)
+let parse_agg_month_year_to_csv (agg_month_year : agg_month_year_info list) : Csv.t =
+  let header = ["year"; "month"; "avg_amount"; "avg_taxes"] in
+  let data = List.map (fun agg_info ->
+    [
+      string_of_int agg_info.month_year.year;
+      string_of_int agg_info.month_year.month;
+      string_of_float agg_info.avg_amount;
+      string_of_float agg_info.avg_taxes;
+    ]
+  ) agg_month_year in
+  header :: data
