@@ -1,3 +1,13 @@
+# Como rodar o projeto
+
+Com o ocaml e opam instalados, utilize os comandos:
+```bash
+opam install dune
+opam install csv
+dune build
+dune exec etl_pipeline
+```
+
 
 # Relatório de Desenvolvimento da Ferramenta ETL
 
